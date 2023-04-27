@@ -1,5 +1,4 @@
 import {HttpException, HttpService, HttpStatus, Injectable} from '@nestjs/common';
-// @ts-ignore
 import { Book } from '@tmo/shared/models';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
