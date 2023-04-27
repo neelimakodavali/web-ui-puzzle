@@ -110,5 +110,37 @@ describe('ToReadEffects', () => {
           .expectOne(`/api/reading-list`)
           .flush(book, { status: 400, statusText: 'Bad Request' });
       });
+
+      it('should check confirmedBookFinished has been invoked or not when BookFinished gets success', done => {
+        actions = new ReplaySubject();
+        const item = createReadingListItem('A');
+        actions.next(ReadingListActions.bookFinished({ item }));
+
+        effects.bookFinished$.subscribe(action => {
+          expect(action).toEqual(
+            ReadingListActions.confirmedBookFinished({
+              item
+            })
+          );
+          done();
+        });
+
+        httpMock.expectOne('/api/reading-list/A/finished').flush(item);
+      });
+
+      it('should check failedBookFinished has been invoked when bookFinished gets failed', done => {
+        actions = new ReplaySubject();
+        const item = createReadingListItem('B');
+        actions.next(ReadingListActions.bookFinished({ item }));
+
+        effects.bookFinished$.subscribe(action => {
+          expect(action).toEqual(
+            ReadingListActions.failedBookFinished({ item })
+          );
+          done();
+        });
+
+        httpMock.expectOne('/api/reading-list/B/finished').error(new ErrorEvent('Error'));
+      });
   });
 });
