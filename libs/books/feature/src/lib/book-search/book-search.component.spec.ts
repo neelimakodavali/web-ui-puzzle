@@ -2,15 +2,19 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { createBook, SharedTestingModule } from '@tmo/shared/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { addToReadingList, clearSearch, getAllBooks, getBooksError, getBooksLoaded, searchBooks } from '@tmo/books/data-access';
+import { addToReadingList, clearSearch, getAllBooks, getBooksError, getBooksLoaded, searchBooks, removeFromReadingList } from '@tmo/books/data-access';
 import { BooksFeatureModule } from '@tmo/books/feature';
 import { BookSearchComponent } from './book-search.component';
 import { Book } from '@tmo/shared/models';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 describe('ProductsListComponent', () => {
   let component: BookSearchComponent;
   let fixture: ComponentFixture<BookSearchComponent>;
   let store: MockStore;
+  let oc: OverlayContainer;
+  let overlayContainerElement: HTMLElement;
+  let dispatchSpy;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -18,13 +22,16 @@ describe('ProductsListComponent', () => {
       providers: [provideMockStore({ initialState: { books: { entities: [] } } }),]
     }).compileComponents();
     store = TestBed.inject(MockStore);
+    oc = TestBed.inject(OverlayContainer);
+    overlayContainerElement = oc.getContainerElement();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BookSearchComponent);
     component = fixture.componentInstance;
     store.overrideSelector(getAllBooks, []);
-    spyOn(store, 'dispatch').and.callThrough();
+    store.overrideSelector(getBooksError, null);
+    dispatchSpy = spyOn(store, 'dispatch').and.callThrough();
     fixture.detectChanges();
   });
 
@@ -78,5 +85,14 @@ describe('ProductsListComponent', () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       clearSearch()
     );
+  });
+
+  it('should trigger snackBar to undo the addReadList', () => {
+    const book: Book = createBook('B');
+    component.addBookToReadingList(book);
+    const buttonElement: HTMLElement = overlayContainerElement.querySelector('.mat-simple-snackbar-action > button');
+    buttonElement?.click();
+    expect(store.dispatch).toHaveBeenCalledWith(addToReadingList({ book }));
+    expect(dispatchSpy).toHaveBeenCalledWith(removeFromReadingList({item: {...book, bookId: 'B'}}));
   });
 });
