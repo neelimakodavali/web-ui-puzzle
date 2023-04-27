@@ -1,3 +1,4 @@
 <ng-container *ngIf="totalUnread$ | async as count">
-  <span matBadge="{{ count }}" matBadgeOverlap="false"> </span>
+  <span matBadge="{{ count }}" matBadgeOverlap="false"
+        role="status" tabindex="0" [attr.aria-label]="'There are '+ count + ' books in reading list'"> </span>
 </ng-container>

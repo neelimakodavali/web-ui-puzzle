@@ -37,6 +37,12 @@ form {
   margin-right: $spacing-xxs;
 }
 
+.search-books {
+  font-weight: 500;
+  color: $gray80;
+  margin-bottom: $spacing-xs;
+}
+
 .book--content--info {
   flex: 1;
   display: flex;
@@ -68,5 +74,10 @@ form {
   justify-content: center;
   min-height: 50vh;
   font-size: 1.5rem;
-  color: $gray40;
+  color: $gray60;
+}
+
+.errMsg {
+  color: $pink-dark;
+  font-weight: bold;
 }
