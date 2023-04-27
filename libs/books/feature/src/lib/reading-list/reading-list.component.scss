@@ -14,7 +14,7 @@
   margin-bottom: $spacing-xs;
   width: 100%;
 
-  > * {
+  .reading-list-item--image, .reading-list-item--details {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,6 +31,9 @@
   flex: 1;
   min-width: 0;
   margin-right: $spacing-xxs;
+  .finished-date {
+    color: $green;
+  }
 }
 
 .reading-list-item--details--title,
@@ -38,6 +41,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.reading-list-actions {
+  display: flex;
+  flex-direction: row;
+  .finish-btn {
+    color: $green;
+  }
 }
 
 .empty {
